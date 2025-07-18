@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Conditionals & Operators</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .presentation-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 20px 0;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: none;
+            animation: slideIn 0.5s ease-in-out;
+            overflow-y: auto;
+            width: 100%;
+            max-height: calc(100vh - 100px); /* leave space for nav/indicator */
+            padding-bottom: 80px; /* extra space for navigation on mobile */
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .slide h2 {
+            color: #34495e;
+            font-size: 2em;
+            margin: 25px 0 15px 0;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+        }
+
+        .slide h3 {
+            color: #2980b9;
+            font-size: 1.5em;
+            margin: 20px 0 10px 0;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+
+        .slide ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .slide ul li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .slide ul li::before {
+            content: "▶";
+            color: #3498db;
+            font-weight: bold;
+            position: absolute;
+            left: -20px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 1em;
+            line-height: 1.6;
+            margin: 20px 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .operators-grid, .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .operator-card, .feature-card {
+            background: linear-gradient(135deg, #ff7675, #d63031);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+            transition: transform 0.3s ease;
+        }
+        .operator-card:hover, .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .operator-card h4, .feature-card h4 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .interactive-demo, .quiz-container {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #fdcb6e;
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .demo-input {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            min-width: 100px;
+        }
+        .demo-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+        }
+        .demo-result {
+            background: rgba(255,255,255,0.9);
+            color: #2c3e50;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #667eea;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+        .quiz-option {
+            background: rgba(255,255,255,0.8);
+            color: #34495e;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+        .quiz-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.2);
+        }
+        .quiz-option.correct {
+            border-color: #27ae60;
+            background: rgba(39, 174, 96, 0.2);
+        }
+        .quiz-option.incorrect {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.2);
+        }
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+        .nav-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .slide-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            z-index: 1000;
+        }
+        @media (max-width: 900px) {
+            .presentation-container {
+                padding: 5px;
+            }
+            .slide {
+                padding: 16px;
+                margin: 8px 0;
+                font-size: 0.98em;
+                max-height: calc(100vh - 80px);
+                padding-bottom: 70px;
+            }
+            .slide h1 {
+                font-size: 1.3em;
+            }
+            .slide h2 {
+                font-size: 1.1em;
+            }
+            .navigation {
+                bottom: 20px;
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav-button {
+                width: 120px;
+            }
+        }
+        @media (max-width: 600px) {
+            .slide {
+                padding: 8px 2vw;
+                margin: 4px 0;
+                font-size: 0.95em;
+                max-height: calc(100vh - 70px);
+                padding-bottom: 60px;
+            }
+            .slide h1 {
+                font-size: 1.1em;
+            }
+            .slide h2 {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-indicator" id="slideIndicator">1 / 12</div>
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <h1>JavaScript Conditionals & Operators</h1>
+            <p class="subtitle">Master the art of decision-making in JavaScript with interactive examples and hands-on practice</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h4>Smart Logic</h4>
+                    <p>Learn conditional thinking</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h4>Interactive</h4>
+                    <p>Hands-on examples</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Practice</h4>
+                    <p>Real-world scenarios</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Comparison Operators -->
+        <div class="slide">
+            <h2>Comparison Operators</h2>
+            <div class="operators-grid">
+                <div class="operator-card">
+                    <h4>== (Equality)</h4>
+                    <div class="code-block">
+<span class="number">5</span> <span class="keyword">==</span> <span class="string">"5"</span> <span class="comment">// true</span>
+<span class="number">0</span> <span class="keyword">==</span> <span class="keyword">false</span> <span class="comment">// true</span></div>
+                    <p>Compares values with type coercion</p>
+                </div>
+                <div class="operator-card">
+                    <h4>=== (Strict Equality)</h4>
+                    <div class="code-block">
+<span class="number">5</span> <span class="keyword">===</span> <span class="string">"5"</span> <span class="comment">// false</span>
+<span class="number">5</span> <span class="keyword">===</span> <span class="number">5</span> <span class="comment">// true</span></div>
+                    <p>Compares values without type coercion</p>
+                </div>
+                <div class="operator-card">
+                    <h4>!= (Inequality)</h4>
+                    <div class="code-block">
+<span class="number">5</span> <span class="keyword">!=</span> <span class="string">"3"</span> <span class="comment">// true</span>
+<span class="number">5</span> <span class="keyword">!=</span> <span class="string">"5"</span> <span class="comment">// false</span></div>
+                    <p>Not equal with type coercion</p>
+                </div>
+                <div class="operator-card">
+                    <h4>!== (Strict Inequality)</h4>
+                    <div class="code-block">
+<span class="number">5</span> <span class="keyword">!==</span> <span class="string">"5"</span> <span class="comment">// true</span>
+<span class="number">5</span> <span class="keyword">!==</span> <span class="number">5</span> <span class="comment">// false</span></div>
+                    <p>Not equal without type coercion</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Relational Operators -->
+        <div class="slide">
+            <h2>Relational Operators</h2>
+            <div class="operators-grid">
+                <div class="operator-card">
+                    <h4>&lt; (Less Than)</h4>
+                    <div class="code-block">
+<span class="number">5</span> <span class="keyword">&lt;</span> <span class="number">10</span> <span class="comment">// true</span>
+<span class="string">"apple"</span> <span class="keyword">&lt;</span> <span class="string">"banana"</span> <span class="comment">// true</span></div>
+                    <p>Checks if left value is less than right</p>
+                </div>
+                <div class="operator-card">
+                    <h4>&gt; (Greater Than)</h4>
+                    <div class="code-block">
+<span class="number">10</span> <span class="keyword">&gt;</span> <span class="number">5</span> <span class="comment">// true</span>
+<span class="string">"zebra"</span> <span class="keyword">&gt;</span> <span class="string">"apple"</span> <span class="comment">// true</span></div>
+                    <p>Checks if left value is greater than right</p>
+                </div>
+                <div class="operator-card">
+                    <h4>&lt;= (Less Than or Equal)</h4>
+                    <div class="code-block">
+<span class="number">5</span> <span class="keyword">&lt;=</span> <span class="number">5</span> <span class="comment">// true</span>
+<span class="number">3</span> <span class="keyword">&lt;=</span> <span class="number">7</span> <span class="comment">// true</span></div>
+                    <p>Checks if left value is less than or equal</p>
+                </div>
+                <div class="operator-card">
+                    <h4>&gt;= (Greater Than or Equal)</h4>
+                    <div class="code-block">
+<span class="number">10</span> <span class="keyword">&gt;=</span> <span class="number">10</span> <span class="comment">// true</span>
+<span class="number">15</span> <span class="keyword">&gt;=</span> <span class="number">8</span> <span class="comment">// true</span></div>
+                    <p>Checks if left value is greater than or equal</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Logical Operators -->
+        <div class="slide">
+            <h2>Logical Operators</h2>
+            <div class="operators-grid">
+                <div class="operator-card">
+                    <h4>&& (AND)</h4>
+                    <div class="code-block">
+<span class="keyword">true</span> <span class="keyword">&&</span> <span class="keyword">true</span> <span class="comment">// true</span>
+<span class="keyword">true</span> <span class="keyword">&&</span> <span class="keyword">false</span> <span class="comment">// false</span>
+<span class="keyword">false</span> <span class="keyword">&&</span> <span class="keyword">true</span> <span class="comment">// false</span></div>
+                    <p>Returns true only if both operands are true</p>
+                </div>
+                <div class="operator-card">
+                    <h4>|| (OR)</h4>
+                    <div class="code-block">
+<span class="keyword">true</span> <span class="keyword">||</span> <span class="keyword">false</span> <span class="comment">// true</span>
+<span class="keyword">false</span> <span class="keyword">||</span> <span class="keyword">true</span> <span class="comment">// true</span>
+<span class="keyword">false</span> <span class="keyword">||</span> <span class="keyword">false</span> <span class="comment">// false</span></div>
+                    <p>Returns true if at least one operand is true</p>
+                </div>
+                <div class="operator-card">
+                    <h4>! (NOT)</h4>
+                    <div class="code-block">
+<span class="keyword">!</span><span class="keyword">true</span> <span class="comment">// false</span>
+<span class="keyword">!</span><span class="keyword">false</span> <span class="comment">// true</span>
+<span class="keyword">!</span><span class="number">0</span> <span class="comment">// true</span></div>
+                    <p>Inverts the boolean value</p>
+                </div>
+                <div class="operator-card">
+                    <h4>?? (Nullish Coalescing)</h4>
+                    <div class="code-block">
+<span class="keyword">null</span> <span class="keyword">??</span> <span class="string">"default"</span> <span class="comment">// "default"</span>
+<span class="number">0</span> <span class="keyword">??</span> <span class="string">"default"</span> <span class="comment">// 0</span></div>
+                    <p>Returns right operand if left is null/undefined</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: If Statement -->
+        <div class="slide">
+            <h2>If Statement</h2>
+            <div class="highlight">
+                <h3>Basic Syntax</h3>
+                <div class="code-block">
+<span class="keyword">if</span> (condition) {
+    <span class="comment">// code to execute if condition is true</span>
+}
+                </div>
+            </div>
+            <div class="highlight">
+                <h3>Real Example</h3>
+                <div class="code-block">
+<span class="keyword">let</span> age = <span class="number">18</span>;
+
+<span class="keyword">if</span> (age >= <span class="number">18</span>) {
+    <span class="function">console</span>.<span class="function">log</span>(<span class="string">"You can vote!"</span>);
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: If-Else Statement -->
+        <div class="slide">
+            <h2>If-Else Statement</h2>
+            <div class="highlight">
+                <h3>Basic Syntax</h3>
+                <div class="code-block">
+<span class="keyword">if</span> (condition) {
+    <span class="comment">// code if condition is true</span>
+} <span class="keyword">else</span> {
+    <span class="comment">// code if condition is false</span>
+}
+                </div>
+            </div>
+            <div class="highlight">
+                <h3>Real Example</h3>
+                <div class="code-block">
+<span class="keyword">let</span> temperature = <span class="number">25</span>;
+
+<span class="keyword">if</span> (temperature > <span class="number">30</span>) {
+    <span class="function">console</span>.<span class="function">log</span>(<span class="string">"It's hot outside!"</span>);
+} <span class="keyword">else</span> {
+    <span class="function">console</span>.<span class="function">log</span>(<span class="string">"It's comfortable outside!"</span>);
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Else If Statement -->
+        <div class="slide">
+            <h2>Else If Statement</h2>
+            <div class="highlight">
+                <h3>Multiple Conditions</h3>
+                <div class="code-block">
+<span class="keyword">let</span> grade = <span class="number">85</span>;
+
+<span class="keyword">if</span> (grade >= <span class="number">90</span>) {
+    <span class="function">console</span>.<span class="function">log</span>(<span class="string">"A grade - Excellent!"</span>);
+} <span class="keyword">else if</span> (grade >= <span class="number">80</span>) {
+    <span class="function">console</span>.<span class="function">log</span>(<span class="string">"B grade - Good job!"</span>);
+} <span class="keyword">else if</span> (grade >= <span class="number">70</span>) {
+    <span class="function">console</span>.<span class="function">log</span>(<span class="string">"C grade - Average"</span>);
+} <span class="keyword">else</span> {
+    <span class="function">console</span>.<span class="function">log</span>(<span class="string">"Need improvement"</span>);
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Switch Statement -->
+        <div class="slide">
+            <h2>Switch Statement</h2>
+            <div class="highlight">
+                <h3>Multiple Case Handling</h3>
+                <div class="code-block">
+<span class="keyword">let</span> day = <span class="string">"Monday"</span>;
+
+<span class="keyword">switch</span> (day) {
+    <span class="keyword">case</span> <span class="string">"Monday"</span>:
+        <span class="function">console</span>.<span class="function">log</span>(<span class="string">"Start of work week"</span>);
+        <span class="keyword">break</span>;
+    <span class="keyword">case</span> <span class="string">"Friday"</span>:
+        <span class="function">console</span>.<span class="function">log</span>(<span class="string">"TGIF!"</span>);
+        <span class="keyword">break</span>;
+    <span class="keyword">case</span> <span class="string">"Saturday"</span>:
+    <span class="keyword">case</span> <span class="string">"Sunday"</span>:
+        <span class="function">console</span>.<span class="function">log</span>(<span class="string">"Weekend!"</span>);
+        <span class="keyword">break</span>;
+    <span class="keyword">default</span>:
+        <span class="function">console</span>.<span class="function">log</span>(<span class="string">"Regular day"</span>);
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Ternary Operator -->
+        <div class="slide">
+            <h2>Ternary Operator</h2>
+            <div class="highlight">
+                <h3>Shorthand Conditional</h3>
+                <div class="code-block">
+<span class="comment">// Syntax: condition ? valueIfTrue : valueIfFalse</span>
+
+<span class="keyword">let</span> age = <span class="number">20</span>;
+<span class="keyword">let</span> status = age >= <span class="number">18</span> ? <span class="string">"adult"</span> : <span class="string">"minor"</span>;
+
+<span class="function">console</span>.<span class="function">log</span>(status); <span class="comment">// "adult"</span>
+                </div>
+            </div>
+            <div class="highlight">
+                <h3>Nested Ternary</h3>
+                <div class="code-block">
+<span class="keyword">let</span> score = <span class="number">85</span>;
+<span class="keyword">let</span> grade = score >= <span class="number">90</span> ? <span class="string">"A"</span> : 
+             score >= <span class="number">80</span> ? <span class="string">"B"</span> : 
+             score >= <span class="number">70</span> ? <span class="string">"C"</span> : <span class="string">"F"</span>;
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Interactive Demo -->
+        <div class="slide">
+            <h2>Interactive Demo</h2>
+            <div class="interactive-demo">
+                <h3>Age Checker</h3>
+                <div class="demo-controls">
+                    <input type="number" id="ageInput" class="demo-input" placeholder="Enter age" value="18">
+                    <button onclick="checkAge()" class="demo-button">Check Age</button>
+                </div>
+                <div id="ageResult" class="demo-result">Enter an age to see the result</div>
+            </div>
+            
+            <div class="interactive-demo">
+                <h3>Grade Calculator</h3>
+                <div class="demo-controls">
+                    <input type="number" id="gradeInput" class="demo-input" placeholder="Enter score" value="85">
+                    <button onclick="calculateGrade()" class="demo-button">Calculate Grade</button>
+                </div>
+                <div id="gradeResult" class="demo-result">Enter a score to see the grade</div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Practice Quiz -->
+        <div class="slide">
+            <h2>Practice Quiz</h2>
+            <div class="quiz-container">
+                <div class="quiz-question" id="quizQuestion">Loading question...</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <button onclick="nextQuestion()" class="demo-button" id="nextBtn" style="display: none;">Next Question</button>
+                <div id="quizResult" class="demo-result" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary -->
+        <div class="slide">
+            <h2>Summary</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h4>Comparison Operators</h4>
+                    <p>==, ===, !=, !==, &lt;, &gt;, &lt;=, &gt;=</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧮</div>
+                    <h4>Logical Operators</h4>
+                    <p>&&, ||, !, ??</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔀</div>
+                    <h4>Conditional Statements</h4>
+                    <p>if, else if, else, switch</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h4>Ternary Operator</h4>
+                    <p>condition ? true : false</p>
+                </div>
+            </div>
+            <div class="highlight">
+                <h3>🎉 Congratulations!</h3>
+                <p>You've mastered JavaScript conditionals and operators. Keep practicing to build amazing applications!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button onclick="previousSlide()" class="nav-button" id="prevBtn">← Previous</button>
+        <button onclick="nextSlide()" class="nav-button" id="nextBtn">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        // Quiz questions
+        const quizQuestions = [
+            {
+                question: "What is the result of: 5 === '5'?",
+                options: ["true", "false", "undefined", "null"],
+                correct: 1,
+                explanation: "The strict equality operator (===) compares both value and type. 5 is a number and '5' is a string, so they are not strictly equal."
+            },
+            {
+                question: "What does the following code output?\nlet x = 10;\nif (x > 5 && x < 15) {\n  console.log('Middle');\n} else {\n  console.log('Outside');\n}",
+                options: ["Middle", "Outside", "Error", "Nothing"],
+                correct: 0,
+                explanation: "x is 10, which is both greater than 5 AND less than 15, so the condition is true and 'Middle' is logged."
+            },
+            {
+                question: "What is the result of: null ?? 'default'?",
+                options: ["null", "undefined", "default", "false"],
+                correct: 2,
+                explanation: "The nullish coalescing operator (??) returns the right operand when the left operand is null or undefined."
+            },
+            {
+                question: "What does this ternary operator return?\nlet age = 16;\nage >= 18 ? 'adult' : 'minor'",
+                options: ["adult", "minor", "true", "false"],
+                correct: 1,
+                explanation: "Since 16 is not greater than or equal to 18, the condition is false, so 'minor' is returned."
+            },
+            {
+                question: "In a switch statement, what happens if you forget the 'break' statement?",
+                options: ["Error occurs", "Nothing happens", "Fall-through occurs", "Loop continues"],
+                correct: 2,
+                explanation: "Without 'break', the code continues executing the next case statements until it finds a break or reaches the end. This is called fall-through."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let selectedAnswer = null;
+        let quizCompleted = false;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+            
+            document.getElementById('slideIndicator').textContent = `${currentSlide + 1} / ${totalSlides}`;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').style.display = currentSlide === 0 ? 'none' : 'block';
+            document.getElementById('nextBtn').textContent = currentSlide === totalSlides - 1 ? 'Restart' : 'Next →';
+            
+            // Initialize quiz when reaching quiz slide
+            if (currentSlide === 10) {
+                initializeQuiz();
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+            } else {
+                currentSlide = 0; // Restart presentation
+                currentQuestion = 0;
+                quizCompleted = false;
+            }
+            updateSlide();
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        // Interactive demos
+        function checkAge() {
+            const age = parseInt(document.getElementById('ageInput').value);
+            const result = document.getElementById('ageResult');
+            
+            if (isNaN(age)) {
+                result.textContent = "Please enter a valid age";
+                result.style.color = "#e74c3c";
+                return;
+            }
+            
+            let message, color;
+            
+            if (age >= 18) {
+                message = `Age ${age}: You are an adult! 🎉`;
+                color = "#27ae60";
+            } else if (age >= 13) {
+                message = `Age ${age}: You are a teenager! 🧒`;
+                color = "#f39c12";
+            } else {
+                message = `Age ${age}: You are a child! 👶`;
+                color = "#3498db";
+            }
+            
+            result.textContent = message;
+            result.style.color = color;
+        }
+
+        function calculateGrade() {
+            const score = parseInt(document.getElementById('gradeInput').value);
+            const result = document.getElementById('gradeResult');
+            
+            if (isNaN(score) || score < 0 || score > 100) {
+                result.textContent = "Please enter a valid score (0-100)";
+                result.style.color = "#e74c3c";
+                return;
+            }
+            
+            let grade, message, color;
+            
+            if (score >= 90) {
+                grade = "A";
+                message = "Excellent! 🌟";
+                color = "#27ae60";
+            } else if (score >= 80) {
+                grade = "B";
+                message = "Good job! 👍";
+                color = "#2ecc71";
+            } else if (score >= 70) {
+                grade = "C";
+                message = "Average 📚";
+                color = "#f39c12";
+            } else if (score >= 60) {
+                grade = "D";
+                message = "Needs improvement 📖";
+                color = "#e67e22";
+            } else {
+                grade = "F";
+                message = "Study harder! 💪";
+                color = "#e74c3c";
+            }
+            
+            result.textContent = `Score: ${score} | Grade: ${grade} | ${message}`;
+            result.style.color = color;
+        }
+
+        // Quiz functionality
+        function initializeQuiz() {
+            if (quizCompleted) return;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestion >= quizQuestions.length) {
+                showQuizComplete();
+                return;
+            }
+            
+            const question = quizQuestions[currentQuestion];
+            document.getElementById('quizQuestion').textContent = `Question ${currentQuestion + 1}: ${question.question}`;
+            
+            const optionsContainer = document.getElementById('quizOptions');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'quiz-option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('quizResult').style.display = 'none';
+            selectedAnswer = null;
+        }
+
+        function selectAnswer(index) {
+            selectedAnswer = index;
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            
+            setTimeout(() => {
+                showAnswer();
+            }, 500);
+        }
+
+        function showAnswer() {
+            const question = quizQuestions[currentQuestion];
+            const options = document.querySelectorAll('.quiz-option');
+            
+            options.forEach((option, index) => {
+                option.onclick = null; // Disable clicking
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedAnswer) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            const result = document.getElementById('quizResult');
+            result.style.display = 'block';
+            
+            if (selectedAnswer === question.correct) {
+                result.innerHTML = `<strong>Correct! ✅</strong><br>${question.explanation}`;
+                result.style.color = "#27ae60";
+            } else {
+                result.innerHTML = `<strong>Incorrect ❌</strong><br>${question.explanation}`;
+                result.style.color = "#e74c3c";
+            }
+            
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        function showQuizComplete() {
+            document.getElementById('quizQuestion').textContent = "Quiz Complete! 🎉";
+            document.getElementById('quizOptions').innerHTML = '';
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            const result = document.getElementById('quizResult');
+            result.style.display = 'block';
+            result.innerHTML = `<strong>Congratulations!</strong><br>You've completed all the practice questions. You're ready to use JavaScript conditionals and operators in real projects!`;
+            result.style.color = "#27ae60";
+            
+            quizCompleted = true;
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        updateSlide();
+
+        // Add some interactive animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.operator-card, .feature-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.style.animation = 'slideIn 0.8s ease-out forwards';
+            });
+        });
+
+        // Add click handlers for operator cards
+        document.querySelectorAll('.operator-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    card.style.transform = 'translateY(-5px)';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
